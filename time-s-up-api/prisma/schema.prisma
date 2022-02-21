@@ -18,7 +18,8 @@ model Theme {
 
 model Card {
   id        Int      @default(autoincrement()) @id
-  nom       String   @unique
+  name       String   @unique
+  fileName String
   theme     Theme?   @relation(fields: [themeId], references: [id])
   themeId   Int?
 }
