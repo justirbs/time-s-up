@@ -56,9 +56,13 @@ export class CardService {
     });
   }
 
+  // return nbrCards random cards
   async drawNCards(nbrCards: number): Promise<Card[]> {
-    return this.prisma.card.findMany({
-      take: nbrCards
-    });
+    // get all cards
+    const cards = await this.prisma.card.findMany();
+    // shuffle cards
+    const shuffledCards = cards.sort(() => 0.5 - Math.random());
+    // return nbrCards random cards
+    return shuffledCards.slice(0, nbrCards);
   }
 }
