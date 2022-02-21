@@ -1,0 +1,15 @@
+.cardFont{
+    background-color : lightgray;
+    width: 30%;
+    padding: 20px;
+    text-align: center;
+    border: solid gray 7px;
+    border-radius: 5px;
+    color : black;
+}
+
+.cardBody{
+    display: flex;
+    justify-content: center;
+    margin: 50px;
+}
