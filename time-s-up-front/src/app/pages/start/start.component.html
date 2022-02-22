@@ -1,0 +1,4 @@
+<input type="number" (change)="onChange($event)">
+<!-- Go to game root -->
+<a [routerLink]="['/game']"><button>Go to game</button></a>
+<app-card *ngFor="let card of getCards()" [card]="card"></app-card>
