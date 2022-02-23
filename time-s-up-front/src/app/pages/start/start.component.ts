@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CardService } from '../../services/card.service';
+import { GameService } from '../../services/game.service';
 import { Card } from '../../entity/card';
 
 @Component({
@@ -9,17 +9,17 @@ import { Card } from '../../entity/card';
 })
 export class StartComponent implements OnInit {
 
-  constructor(private cardService: CardService) { }
+  constructor(private gameService: GameService) { }
 
   ngOnInit(): void {
   }
 
   public onChange(event: any) {
-    this.cardService.drawNCards(event.target.value);
+    this.gameService.drawNCards(event.target.value);
   }
 
   public getCards(): Card[] {
-    return this.cardService.getCards();
+    return this.gameService.getCards();
   }
 
 }

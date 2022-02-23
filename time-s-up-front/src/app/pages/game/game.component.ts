@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Card } from 'src/app/entity/card';
-import { CardService } from 'src/app/services/card.service';
+import { GameService } from 'src/app/services/game.service';
 
 @Component({
   selector: 'app-game',
@@ -9,13 +9,13 @@ import { CardService } from 'src/app/services/card.service';
 })
 export class GameComponent implements OnInit {
 
-  constructor(private cardService: CardService) { }
+  constructor(private gameService: GameService) { }
 
   ngOnInit(): void {
   }
 
   public getCards(): Card[] {
-    return this.cardService.getCards();
+    return this.gameService.getCards();
   }
 
 }
