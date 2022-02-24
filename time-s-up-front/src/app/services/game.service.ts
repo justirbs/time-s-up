@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Game } from '../entity/game';
 import { Card } from '../entity/card';
 import { Team } from '../entity/team';
+import { Subscription } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -16,13 +17,19 @@ export class GameService {
     if (cacheGame !== null) {
       this.game = JSON.parse(cacheGame);
     } else {
-      this.game = {round: 0, teams: [], cards: []};
+      this.game = {round: 0, teams: [], cards: [], turnCounter: 0, currentCardId: 0};
     }
+  }
+
+  public resetGame(){
+    this.game = {round: 0, teams: this.game.teams, cards: [], turnCounter: 0, currentCardId: 0};
+    this.saveGame();
   }
 
   private saveGame(){
     localStorage.setItem('game', JSON.stringify(this.game));
   }
+
 
 
 
@@ -34,7 +41,25 @@ export class GameService {
     return this.game.cards.filter(card => card.teamName === undefined);
   }
 
-  public drawNCards(nbrOfCard: number){
+  public nextCard(){
+    let cards = this.getCardsNotFound();
+    let currentCard = cards.find(card => card.id === this.game.currentCardId);
+    if(currentCard != undefined){
+      let index = cards.indexOf(currentCard);
+      this.game.currentCardId = cards[(index+1)%cards.length].id;
+      this.saveGame();
+    }
+  }
+
+  public getCurrentCard(): Card{
+    let card = this.game.cards.find(card => card.id === this.game.currentCardId);
+    if(card === undefined){
+      return this.getCardsNotFound()[0];
+    }
+    return card;
+  }
+
+  public drawNCards(nbrOfCard: number): Subscription{
     const optionRequete = {
       headers: new HttpHeaders({ 
         'Access-Control-Allow-Origin':'*',
@@ -42,9 +67,10 @@ export class GameService {
     };
     const baseurl = 'http://localhost:3000';
     
-    this.http.get<Card[]>(baseurl + '/draw?nbr=' + nbrOfCard, optionRequete).subscribe(
+    return this.http.get<Card[]>(baseurl + '/draw?nbr=' + nbrOfCard, optionRequete).subscribe(
       (data) => {
         this.game.cards = data;
+        this.game.currentCardId = this.game.cards[0].id;
         this.saveGame();
       }
     );
@@ -60,6 +86,8 @@ export class GameService {
     // save the game
     this.saveGame();
   }
+
+
 
 
 
@@ -92,6 +120,8 @@ export class GameService {
 
 
 
+
+
   public addPlayer(team: Team, player: string){
     const index = this.game.teams.indexOf(team);
     this.game.teams[index].players.push(player);
@@ -104,6 +134,21 @@ export class GameService {
     this.game.teams[index].players.splice(indexPlayer, 1);
     this.saveGame();
   }
+
+
+
+
+
+  public getNbrOfTurns(): number{
+    return this.game.turnCounter;
+  }
+
+  public nextTurn(){
+    this.game.turnCounter++;
+    this.saveGame();
+  }
+
+
 
 
 
@@ -122,6 +167,21 @@ export class GameService {
     this.game.teams.forEach(team => {
       team.scores[this.game.round-1] = 0;
     });
+    // shuffle the cards
+    var currentIndex = this.game.cards.length, temporaryValue, randomIndex;
+    while (0 !== currentIndex) {
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+      temporaryValue = this.game.cards[currentIndex];
+      this.game.cards[currentIndex] = this.game.cards[randomIndex];
+      this.game.cards[randomIndex] = temporaryValue;
+    }
+    // reset the turnCounter
+    this.game.turnCounter = 0;
+
+    // reset the currentCardId
+    this.game.currentCardId = this.game.cards[0].id;
+
     this.saveGame();
   }
 }

@@ -1,2 +1,4 @@
-<p>game works!</p>
-<app-card *ngFor="let card of getCards()" [card]="card"></app-card>
+<p>Team {{currentTeam.name}} !</p>
+<p>{{currentPlayer}}'s turn</p>
+<button (click)="resetGame()">Reset game</button>
+<app-card [card]="currentCard"></app-card>

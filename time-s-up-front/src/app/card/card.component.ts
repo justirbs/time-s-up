@@ -12,7 +12,8 @@ export class CardComponent implements OnInit {
     "id": 0,
     "name": "",
     "fileName": "",
-    "themeId": 0
+    "themeId": 0,
+    "teamName": ""
   };
 
   constructor() { }
