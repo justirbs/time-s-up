@@ -15,7 +15,7 @@ export class GameComponent implements OnInit {
   }
 
   public getCards(): Card[] {
-    return this.gameService.getCards();
+    return this.gameService.getAllCards();
   }
 
 }
