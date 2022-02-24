@@ -1,6 +1,7 @@
 # Web time's up app
 
 ## Import datas in mysql database
+After you have created the database, you can import the datas in the database.  
 ```bash
 cd ./datas
 cat data.csv | awk -F';' '{ print "INSERT INTO Card (name,fileName) VALUES (\"" $1 "\",\"" $2 "\");" }' > data.sql

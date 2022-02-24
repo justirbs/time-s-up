@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { CardService } from '../../services/card.service';
+import { GameService } from '../../services/game.service';
 import { Card } from '../../entity/card';
+import { Team } from 'src/app/entity/team';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-start',
@@ -9,17 +11,20 @@ import { Card } from '../../entity/card';
 })
 export class StartComponent implements OnInit {
 
-  constructor(private cardService: CardService) { }
+  public teams: Team[];
+
+  constructor(private gameService: GameService,
+              private router: Router) {
+    this.teams = this.gameService.getTeams();
+  }
 
   ngOnInit(): void {
   }
 
-  public onChange(event: any) {
-    this.cardService.drawNCards(event.target.value);
-  }
-
-  public getCards(): Card[] {
-    return this.cardService.getCards();
+  public startGame() {
+    this.gameService.drawNCards(10);
+    this.router.navigate(['/game']);
+    
   }
 
 }

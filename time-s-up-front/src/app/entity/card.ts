@@ -3,4 +3,5 @@ export interface Card {
     name: string;
     fileName: string;
     themeId?: number;
+    teamName?: string;
   }

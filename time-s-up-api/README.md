@@ -19,6 +19,12 @@ create the `.env` file and add the following lines:
 DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DB_NAME"
 ```
 
+## Build database
+```bash
+npx prisma generate
+npx prisma migrate dev
+```
+
 ## Running the app
 
 ```bash
