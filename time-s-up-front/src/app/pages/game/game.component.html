@@ -1,4 +1,7 @@
-<p>Team {{currentTeam.name}} !</p>
-<p>{{currentPlayer}}'s turn</p>
+<h1>Team {{currentTeam.name}} !</h1>
+<h2>{{currentPlayer}}'s turn</h2>
 <button (click)="resetGame()">Reset game</button>
 <app-card [card]="currentCard"></app-card>
+<button (click)="pass()">Pass</button>
+<button (click)="correct()">Correct</button>
+<p>time left : {{getTimer()}}</p>

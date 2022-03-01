@@ -3,7 +3,9 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Game } from '../entity/game';
 import { Card } from '../entity/card';
 import { Team } from '../entity/team';
-import { Subscription } from 'rxjs';
+import { Subscription, timer } from 'rxjs';
+
+const ROUND_DURATION = 10;
 
 @Injectable({
   providedIn: 'root'
@@ -17,12 +19,12 @@ export class GameService {
     if (cacheGame !== null) {
       this.game = JSON.parse(cacheGame);
     } else {
-      this.game = {round: 0, teams: [], cards: [], turnCounter: 0, currentCardId: 0};
+      this.game = {round: 0, teams: [], cards: [], turnCounter: 0, currentCardId: 0, timer: ROUND_DURATION};
     }
   }
 
   public resetGame(){
-    this.game = {round: 0, teams: this.game.teams, cards: [], turnCounter: 0, currentCardId: 0};
+    this.game = {round: 0, teams: this.game.teams, cards: [], turnCounter: 0, currentCardId: 0, timer: ROUND_DURATION};
     this.saveGame();
   }
 
@@ -182,6 +184,20 @@ export class GameService {
     // reset the currentCardId
     this.game.currentCardId = this.game.cards[0].id;
 
+    this.saveGame();
+  }
+
+
+
+  public getTimer(): number{
+    return this.game.timer;
+  }
+  public tickTimer(){
+    this.game.timer--;
+    this.saveGame();
+  }
+  public resetTimer(){
+    this.game.timer = ROUND_DURATION;
     this.saveGame();
   }
 }

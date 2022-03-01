@@ -7,4 +7,5 @@ export interface Game {
     cards: Card[];
     turnCounter: number; // Number of turns since the round started
     currentCardId: number; // Id of the current card
+    timer: number;
   }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { timer } from 'rxjs';
 import { Card } from 'src/app/entity/card';
 import { Team } from 'src/app/entity/team';
 import { GameService } from 'src/app/services/game.service';
@@ -15,6 +16,11 @@ export class GameComponent implements OnInit {
   public currentPlayer: string = '';
   public currentCard: Card = {id: 0, name: '', fileName: '', themeId: 0, teamName: ''};
 
+  // timer every second
+  private timerInterval = timer(0, 1000);
+  private timerSubscription: any;
+
+
   constructor(private gameService: GameService,
               private router: Router) {
     // CREATE FAKE TEAMS
@@ -24,11 +30,10 @@ export class GameComponent implements OnInit {
       this.gameService.addTeam({name: '3', players: ['Robert', 'Marcel', 'Jacques', 'Claude'], scores: [0, 0, 0]});
     }
     console.log(this.gameService.getTeams());
-    //DELETE ALL TEAMS
+    // DELETE ALL TEAMS
     // for (let i = 0; i < this.gameService.getTeams().length; i++) {
     //   this.gameService.removeTeam(this.gameService.getTeams()[i]);
     // }
-
 
     this.initTurn();
   }
@@ -39,6 +44,10 @@ export class GameComponent implements OnInit {
 
   public getCards(): Card[] {
     return this.gameService.getAllCards();
+  }
+
+  public getTimer(): number {
+    return this.gameService.getTimer();
   }
 
   public initTurn(){
@@ -54,12 +63,57 @@ export class GameComponent implements OnInit {
 
     // get the current card
     this.currentCard = this.gameService.getCurrentCard();
-    console.log(this.currentCard);
+
+    // stop the timer
+    if (this.timerSubscription) {
+      this.timerSubscription.unsubscribe();
+    }
+    // reset the timer
+    this.gameService.resetTimer();
+    // start the timer
+    this.startTimer();
+  }
+
+  public startTimer(){
+    this.timerSubscription = this.timerInterval.subscribe(() => {
+        this.gameService.tickTimer();
+        if (this.gameService.getTimer() <= 0) {
+          this.timesUp();
+        }
+      });
   }
 
   public resetGame(){
     this.gameService.resetGame();
     this.router.navigate(['/']);
+  }
+
+  public pass(){
+    this.gameService.nextCard();
+    this.currentCard = this.gameService.getCurrentCard();
+  }
+
+  public correct(){
+    // go to the next card
+    this.gameService.nextCard();
+    // set card to found
+    this.gameService.foundCard(this.currentCard, this.currentTeam);
+    // if no more cards, go to the next round
+    if (this.gameService.getCardsNotFound().length <= 0) {
+      // go to the next round and change the player
+      this.gameService.nextRound();
+      this.gameService.nextTurn();
+      this.initTurn(); // this function get the new current card
+    } else {
+      // else, get the new current card
+      this.currentCard = this.gameService.getCurrentCard();
+    }
+  }
+
+  public timesUp(){
+    this.gameService.nextTurn();
+    this.gameService.nextCard();
+    this.initTurn();
   }
 
 }

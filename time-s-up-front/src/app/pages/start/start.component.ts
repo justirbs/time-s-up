@@ -23,6 +23,7 @@ export class StartComponent implements OnInit {
 
   public startGame() {
     this.gameService.drawNCards(10).add(() => {
+      this.gameService.nextRound();
       this.router.navigate(['/game']);
     }
     );
